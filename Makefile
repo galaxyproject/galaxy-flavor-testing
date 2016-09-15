@@ -21,7 +21,7 @@ before_install:
 	sudo mkdir $(GALAXY_HOME)
 	sudo chown -R $(GALAXY_TRAVIS_USER):$(GALAXY_TRAVIS_USER) $(GALAXY_HOME)
 	docker build -t galaxy-docker/test .
-	docker run -d -p 8080:80 -p 8021:21 -p 8800:8800 \
+	docker run -d -p 8080:80 -p 8021:21 -p 8022:22 \
 		--name galaxy_test_container \
 		--privileged=true \
 		-e GALAXY_CONFIG_ALLOW_USER_DATASET_PURGE=True \
