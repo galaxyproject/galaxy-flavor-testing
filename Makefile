@@ -44,10 +44,10 @@ install:
 
 script:
 	curl --fail $(BIOBLEND_GALAXY_URL)/api/version
-	time > $HOME/time.txt && curl --fail -T $HOME/time.txt ftp://localhost:8021 --user $(GALAXY_USER):$(GALAXY_USER_PASSWD)
+	date > $(HOME)/time.txt && curl --fail -T $(HOME)/time.txt ftp://localhost:8021 --user $(GALAXY_USER):$(GALAXY_USER_PASSWD)
 	curl --fail ftp://localhost:8021 --user $(GALAXY_USER):$(GALAXY_USER_PASSWD)
 	# Run bioblend nosetests with the same UID and GID as the galaxy user inside if Docker
 	# this will guarantee that exchanged files bewteen bioblend and Docker are read & writable from both sides
-	sudo -E su $(GALAXY_TRAVIS_USER) -c "export PATH=$(GALAXY_HOME)/.local/bin/:$PATH && cd $(GALAXY_HOME)/bioblend-master && tox -e $TOX_ENV -- -e 'test_download_dataset'"
+	sudo -E su $(GALAXY_TRAVIS_USER) -c "export PATH=$(GALAXY_HOME)/.local/bin/:$(PATH) && cd $(GALAXY_HOME)/bioblend-master && tox -e $TOX_ENV -- -e 'test_download_dataset'"
 	# Test Docker in Docker, used by Interactive Environments; This needs to be at the end as Docker takes some time to start.
 	docker exec -i -t galaxy_test_container docker info
