@@ -33,16 +33,14 @@ before_install:
 
 	sleep 30
 	docker ps
-	cd $(GALAXY_HOME)
-	sudo su $(GALAXY_TRAVIS_USER) -c 'wget https://github.com/bgruening/bioblend/archive/master.tar.gz'
-	sudo su $(GALAXY_TRAVIS_USER) -c 'tar xfz master.tar.gz'
+	cd $(GALAXY_HOME) && sudo su $(GALAXY_TRAVIS_USER) -c 'wget https://github.com/bgruening/bioblend/archive/master.tar.gz'
+	cd $(GALAXY_HOME) && sudo su $(GALAXY_TRAVIS_USER) -c 'tar xfz master.tar.gz'
 
 install:
-	cd $(GALAXY_HOME)/bioblend-master
 	sudo su $(GALAXY_TRAVIS_USER) -c 'pip install --user --upgrade "tox>=1.8.0" "pep8<=1.6.2" '
-	sudo su $(GALAXY_TRAVIS_USER) -c 'python setup.py install --user'
+	cd $(GALAXY_HOME)/bioblend-master && sudo su $(GALAXY_TRAVIS_USER) -c 'python setup.py install --user'
 	# remove flake8 testing for bioblend from tox
-	sudo su $(GALAXY_TRAVIS_USER) -c 'sed -i.bak "s/commands.*$/commands =/" tox.ini'
+	cd $(GALAXY_HOME)/bioblend-master && sudo su $(GALAXY_TRAVIS_USER) -c "sed -i 's/commands.*$$/commands =/' tox.ini"
 
 script:
 	curl --fail $(BIOBLEND_GALAXY_URL)/api/version
@@ -50,6 +48,6 @@ script:
 	curl --fail ftp://localhost:8021 --user $(GALAXY_USER):$(GALAXY_USER_PASSWD)
 	# Run bioblend nosetests with the same UID and GID as the galaxy user inside if Docker
 	# this will guarantee that exchanged files bewteen bioblend and Docker are read & writable from both sides
-	sudo -E su $GALAXY_TRAVIS_USER -c "export PATH=$(GALAXY_HOME)/.local/bin/:$PATH && cd $(GALAXY_HOME)/bioblend-master && tox -e $TOX_ENV -- -e 'test_download_dataset'"
+	sudo -E su $(GALAXY_TRAVIS_USER) -c "export PATH=$(GALAXY_HOME)/.local/bin/:$PATH && cd $(GALAXY_HOME)/bioblend-master && tox -e $TOX_ENV -- -e 'test_download_dataset'"
 	# Test Docker in Docker, used by Interactive Environments; This needs to be at the end as Docker takes some time to start.
 	docker exec -i -t galaxy_test_container docker info
