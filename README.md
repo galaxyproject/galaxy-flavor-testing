@@ -6,3 +6,12 @@ To read more about it by visiting the [Galaxy website](http://galaxyproject.org/
 This projects hosts Travis scripts to unify and ease the testing of such flavors. Copy the included [`example_travis.yml`](example_travis.yml) into your github repository of your Galaxy flavor, name it `.travis.yml` and it will be tested automatically.
 
 Note: You need to activate Travis as described [here.](https://travis-ci.org/getting_started)
+
+Finally, you can add an SVG at the top of your readme describing whether your tests pass if your flavor is publicly available on github. At the top of your repository's README.md, add (substituting the proper `OWNER` and `REPO` of course):
+
+```
+[![Build Status](https://api.travis-ci.org/OWNER/REPO.svg)](https://travis-ci.org/OWNER/REPO)
+```
+
+
+
