@@ -42,6 +42,8 @@ sleep:
 	sleep 60
 
 install:
+	# travis special feature ;)
+	sudo rm -f /etc/boto.cfg
 	cd $(GALAXY_HOME) && sudo su $(GALAXY_TRAVIS_USER) -c 'wget https://github.com/galaxyproject/bioblend/archive/master.tar.gz'
 	cd $(GALAXY_HOME) && sudo su $(GALAXY_TRAVIS_USER) -c 'tar xfz master.tar.gz'
 	sudo su $(GALAXY_TRAVIS_USER) -c 'pip install --user --upgrade "tox>=1.8.0" "pep8<=1.6.2" six '
