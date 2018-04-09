@@ -37,6 +37,7 @@ docker_run:
 		-v /tmp/:/tmp/ \
 		galaxy-docker/test
 	docker ps
+	docker exec -i -t galaxy_test_container galaxy-wait -v
 
 sleep:
 	sleep 60
