@@ -1,0 +1,55 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    working_directory: /tmp/app
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - /tmp/caches/app.tar
+      - run:
+          name: Load Docker image layer cache
+          no_output_timeout: 1200
+          command: |
+            set +o pipefail
+            docker load -i /tmp/caches/app.tar | true
+      - run:
+          name: Build application Docker image
+          command: |
+               wget https://raw.githubusercontent.com/galaxyproject/galaxy-flavor-testing/master/Makefile
+               make docker_install
+               make docker_build
+               make docker_run
+               sleep 60
+      - run:
+          name: Save Docker image layer cache
+          command: |
+            mkdir -p /tmp/caches
+            docker save -o /tmp/caches/app.tar galaxy-docker/test
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - /tmp/caches/app.tar
+      - run:
+          name: Run tests
+          command: |
+               sudo apt-get update
+               sudo apt-get install python-dev
+               make install
+               make test_api
+               make test_ftp
+               make test_bioblend
+          environment:
+               TOX_ENV: py27
+      - deploy:
+          name: Push application Docker image
+          command: |
+            set -x
+            if [ -z "$CIRCLE_TAG" ] && [ "$CIRCLE_BRANCH" = master ]; then
+                sh +x -c 'echo $QUAY_TOKEN' | docker login -u=$QUAY_USERNAME --password-stdin quay.io
+                docker tag galaxy-docker/test quay.io/bgruening/galaxy-rna-seq:${CIRCLE_TAG:-$CIRCLE_BRANCH}
+                docker push quay.io/bgruening/galaxy-rna-seq:${CIRCLE_TAG:-$CIRCLE_BRANCH}
+            fi
