@@ -37,7 +37,7 @@ docker_run:
 		-v /tmp/:/tmp/ \
 		galaxy-docker/test
 	docker ps
-	docker exec -i -t galaxy_test_container /tool_deps/_conda/bin/galaxy-wait -v
+	docker exec galaxy_test_container /tool_deps/_conda/bin/galaxy-wait -v
 
 sleep:
 	sleep 60
@@ -56,14 +56,14 @@ test_api:
 	curl --fail $(BIOBLEND_GALAXY_URL)/api/version
 
 test_ftp:
-	date > $(HOME)/time.txt && curl --fail -T $(HOME)/time.txt ftp://localhost:8021 --user $(GALAXY_USER):$(GALAXY_USER_PASSWD)
-	curl --fail ftp://localhost:8021 --user $(GALAXY_USER):$(GALAXY_USER_PASSWD)
+	date > $(HOME)/time.txt && curl --fail -T $(HOME)/time.txt ftp://127.0.0.1:8021 --user $(GALAXY_USER):$(GALAXY_USER_PASSWD)
+	curl --fail ftp://127.0.0.1:8021 --user $(GALAXY_USER):$(GALAXY_USER_PASSWD)
 
 test_bioblend:
 	# Run bioblend nosetests with the same UID and GID as the galaxy user inside if Docker
 	# this will guarantee that exchanged files bewteen bioblend and Docker are read & writable from both sides
 	sudo -E su $(GALAXY_TRAVIS_USER) -c "export BIOBLEND_GALAXY_API_KEY=fakekey && export BIOBLEND_GALAXY_URL=http://localhost:8080 && export BIOBLEND_TEST_JOB_TIMEOUT=240 && export PATH=$(GALAXY_HOME)/.local/bin/:$(PATH) && cd $(GALAXY_HOME)/bioblend-master && tox -e $(TOX_ENV) -- -k 'not download_dataset and not download_history and not export_and_download'"
 
-test_docker_in_docker:	
+test_docker_in_docker:
 	# Test Docker in Docker, used by Interactive Environments; This needs to be at the end as Docker takes some time to start.
 	docker exec -i -t galaxy_test_container docker info
