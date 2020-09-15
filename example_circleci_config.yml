@@ -16,17 +16,17 @@ jobs:
           command: |
                make install
       - run:
-          name: Run tests 
-          command: |   
+          name: Run tests
+          command: |
                make test_api
                make test_ftp
                #make test_bioblend
           environment:
-               TOX_ENV: py27
+               TOX_ENV: py37
       - run:
           name: push image
           command: |
             set -x
             sh +x -c 'echo $QUAY_TOKEN' | docker login -u=$QUAY_USERNAME --password-stdin quay.io
-            docker tag galaxy-docker/test quay.io/bgruening/galaxy-rna-seq:circle 
+            docker tag galaxy-docker/test quay.io/bgruening/galaxy-rna-seq:circle
             docker push quay.io/bgruening/galaxy-rna-seq:circle
