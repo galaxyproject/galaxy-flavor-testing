@@ -43,7 +43,7 @@ jobs:
                make test_ftp
                make test_bioblend
           environment:
-               TOX_ENV: py27
+               TOX_ENV: py37
       - deploy:
           name: Push application Docker image
           command: |
