@@ -46,11 +46,11 @@ install:
 	# travis special feature ;)
 	sudo rm -f /etc/boto.cfg
 	cd $(GALAXY_HOME) && sudo su $(GALAXY_TRAVIS_USER) -c 'wget https://github.com/galaxyproject/bioblend/archive/main.tar.gz'
-	cd $(GALAXY_HOME) && sudo su $(GALAXY_TRAVIS_USER) -c 'tar xfz master.tar.gz'
+	cd $(GALAXY_HOME) && sudo su $(GALAXY_TRAVIS_USER) -c 'tar xfz main.tar.gz'
 	sudo su $(GALAXY_TRAVIS_USER) -c 'pip install --user --upgrade "tox>=1.8.0" "pep8<=1.6.2" six '
-	cd $(GALAXY_HOME)/bioblend-master && sudo su $(GALAXY_TRAVIS_USER) -c 'python setup.py install --user'
+	cd $(GALAXY_HOME)/bioblend-main && sudo su $(GALAXY_TRAVIS_USER) -c 'python setup.py install --user'
 	# remove flake8 testing for bioblend from tox
-	cd $(GALAXY_HOME)/bioblend-master && sudo su $(GALAXY_TRAVIS_USER) -c "sed -i 's/commands.*$$/commands =/' tox.ini" && sudo su $(GALAXY_TRAVIS_USER) -c "sed -i 's/GALAXY_VERSION/GALAXY_VERSION BIOBLEND_TEST_JOB_TIMEOUT/' tox.ini"
+	cd $(GALAXY_HOME)/bioblend-main && sudo su $(GALAXY_TRAVIS_USER) -c "sed -i 's/commands.*$$/commands =/' tox.ini" && sudo su $(GALAXY_TRAVIS_USER) -c "sed -i 's/GALAXY_VERSION/GALAXY_VERSION BIOBLEND_TEST_JOB_TIMEOUT/' tox.ini"
 
 test_api:
 	curl --fail $(BIOBLEND_GALAXY_URL)/api/version
